@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    background-color: #CCC;
+}
+
+input:focus {
+    outline: none;
+}
+
+form {
+    width: 400px;
+    margin: 40px auto;
+}
+
+form h2 {
+    font-family: Verdana, Geneva, sans-serif;
+    text-align: center;    
+}
+
+form label {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+form label span {
+    display: inline-block;
+    width: 49%;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+}
+
+form label input {
+    display: inline-block;
+    width: 50%;
+    font-family: Verdana, Geneva, sans-serif;
+    padding: 5px;
+    border: 1px #222 solid;
+    box-sizing: border-box;
+}
