@@ -153,82 +153,18 @@
 
         if (dataValue) {
             inputs[i].addEventListener('keydown', inputMask.masking);
+            inputs[i].addEventListener('keyup', function(event){
+                var key = event.charCode || event.keyCode;
+                if (inputMask.keyIgnore.indexOf(key) >= 0) {
+					console.log("keyup");
+                    var input = event.target;
+                    var data = input.getAttribute('data-mask');
+
+                    var mask = inputMask.getPattern(data, input.value.length, true);
+                    inputMask.ignoreKey = false;
+                    input.value = inputMask.checkMask(input.value, mask);
+                }
+            })
         }
     }
 })(window, document);
-
-function tel_mask(src) {
-    var val = src.value
-    val = val.split('');
-    var key = val[val.length - 1];
-
-    var more_dig = '11';
-
-    var val_return = new Array();
-    if (key.search(/[0-9]/) <= 0) {
-        for (i = 0; i < val.length; i++) {
-            if ((i == 0) && (val[i] != '(')) {
-                val_return[i] = '(';
-                val_return[i + 1] = val[i];
-            } else if ((i == 3) && (val[i] != ')')) {
-                val_return[i] = ') ';
-                val_return[i + 2] = val[i];
-            } else if ((i == 9) && (val[i] != '-')) {
-                if (val[10] != '-') {
-                    val_return[i] = '-';
-                    val_return[i + 1] = val[i];
-                } else {
-                    val_return[i] = val[i];
-                }
-                if (more_dig.indexOf(Number(val[1] + val[2])) >= 0) {
-                    src.maxLength = 15;
-                } else {
-                    src.maxLength = 14;
-                }
-            } else if ((i == 13) && (val[10] == '-')) {
-                val_return[i] = val[i];
-                if ((val[9] != '-') && (val[14] == undefined)) {
-                    val_return[10] = val[9];
-                    val_return[9] = val[10];
-                }
-            } else if ((i == 14) && (val[9] == '-')) {
-                if (val[10] != '-') {
-                    val_return[9] = val[10];
-                    val_return[10] = val[9];
-                }
-                val_return[i] = val[i];
-
-                /*if(more_dig.indexOf(Number(val[1]+val[2])) >= 0){
-                 val_return[i] = '-';
-                 val_return[i+1] = val[i];
-                 } else {
-                 val_return[i] = val[i];	
-                 }*/
-            } else {
-                val_return[i] = val[i];
-            }
-        }
-    } else {
-        val.pop();
-        val_return = val;
-    }
-    /* else if((i==9)&&(val[i] != '-')){
-     if(more_dig.indexOf(Number(val[1]+val[2])) < 0){
-     val_return[i] = '-';
-     val_return[i+1] = val[i];
-     src.maxLength = 14
-     } else {
-     val_return[i] = val[i];
-     }
-     } else if((i==10)&&(val[i] != '-')){
-     if(more_dig.indexOf(Number(val[1]+val[2])) >= 0){
-     val_return[i] = '-';
-     val_return[i+1] = val[i];
-     src.maxLength = 15
-     } else {
-     val_return[i] = val[i];	
-     }
-     }*/
-    val_return = val_return.join('');
-    src.value = val_return;
-}
