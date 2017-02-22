@@ -15,65 +15,52 @@
             'a': /[a-z]/,
             'i': /[a-zA-Z]/
         },
-        keyAccept: [8,9,13,16,18,37,38,39,40,112,113,114,115,116,117,118,119,120,121,122,123],
+        keyIgnore: [8, 17, 18],
         input: null,
+        ignoreKey: false,
         masking: function (event) {
             inputMask.input = event.target;
             var data = inputMask.input.getAttribute('data-mask');
-
+            var value = inputMask.input.value;
             var key = event.charCode || event.keyCode;
             var maskFix = 0;
-            if (key == 8) {
-                maskFix = -1;
+
+            if (inputMask.keyIgnore.indexOf(key) >= 0 || inputMask.ignoreKey) {
+                inputMask.ignoreKey = true;
+                return true;
             } else {
-                for (var chars in inputMask.espChar) {
-                    if (String.fromCharCode(key).search(inputMask.espChar[chars]) >= 0) {
-                        maskFix = 1;
-                        break;
+                if (key == 8) {
+                    maskFix = -1;
+                } else {
+                    for (var chars in inputMask.espChar) {
+                        if (String.fromCharCode(key).search(inputMask.espChar[chars]) >= 0) {
+                            maskFix = 1;
+                            break;
+                        }
                     }
                 }
-            }
 
-            var mask = inputMask.getPattern(data, inputMask.input.value.length + maskFix);
-            if (inputMask.keyAccept.indexOf(key) >= 0) {
-                if (inputMask.checkMask(inputMask.input.value, mask)) {
+                var mask = inputMask.getPattern(data, value.length + maskFix);
+
+                var charKey = String.fromCharCode(key);
+
+				if(!event.shiftKey){
+					charKey = charKey.toLowerCase();
+				}
+
+                if (!inputMask.maskSet(charKey, mask)) {
                     event.preventDefault();
                 }
-                return true;
             }
-            key = String.fromCharCode(key);
-
-            if (!inputMask.maskSet(key, mask)) {
-                event.preventDefault();
-            }
-
         },
         maskSet: function (valKey, mask) {
-            inputMask.checkMask(inputMask.input.value, mask);
+            var valueChecked = inputMask.checkMask(inputMask.input.value+valKey, mask);
 
-            return inputMask.maskProcess(inputMask.input.value.length, valKey, mask);
-        },
-        maskProcess: function (cursor, valKey, mask) {
-            var maskIndex = cursor;
-            var maskKey = mask[maskIndex];
-
-            if (maskKey) {
-                while (!inputMask.espChar[maskKey]) {
-                    inputMask.input.value += maskKey;
-                    maskIndex++;
-                    maskKey = mask[maskIndex];
-                }
-
-                if (maskKey) {
-                    if (valKey.search(inputMask.espChar[maskKey]) >= 0) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
+			if(valueChecked == inputMask.input.value){
+				return false;
+			} else {
+				inputMask.input.value = valueChecked;
+			}
         },
         getPattern: function (label, length, nomask) {
             var mask = inputMask.patterns[label] ? inputMask.patterns[label] : label;
