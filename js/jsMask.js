@@ -22,7 +22,6 @@
             var data = inputMask.input.getAttribute('data-mask');
 
             var key = event.charCode || event.keyCode;
-            console.log(key);
             var maskFix = 0;
             if (key == 8) {
                 maskFix = -1;
