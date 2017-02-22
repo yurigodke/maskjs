@@ -113,25 +113,37 @@
 
         },
         checkMask: function (val, mask) {
-            val = val.split('');
-            var initCount = val.length;
-            var valReturn = new Array();
-            for (var i = 0; i < val.length; i++) {
-                for (var pattern in inputMask.espChar) {
-                    if (val[i].search(inputMask.espChar[pattern]) >= 0) {
-                        valReturn.push(val[i]);
+            var valArr = val.split('');
+            var maskArr = mask.split('');
+            var valChecked = '';
+
+            var valIndex = 0;
+            for(var i=0;i<maskArr.length;i++){
+                if(valIndex >= valArr.length){
+                    break;
+                }
+                var charRegex = inputMask.espChar[maskArr[i]];
+                if(charRegex){
+                    var whileCond = valArr[valIndex] != undefined && valArr[valIndex].search(charRegex) < 0;
+                    while(whileCond){
+                        valIndex++;
+                        whileCond = valArr[valIndex] != undefined && valArr[valIndex].search(charRegex) < 0;
+                    }
+                    if(valArr[valIndex] != undefined && valArr[valIndex].search(charRegex) >= 0){
+                        valChecked += valArr[valIndex];
+                        valIndex++;
+                    }
+                } else {
+                    if(valArr[valIndex] == maskArr[i]){
+                        valChecked += valArr[valIndex];
+                        valIndex++;
+                    } else {
+                        valChecked += maskArr[i];
                     }
                 }
             }
-            inputMask.input.value = ''
-            for (var i = 0; i < valReturn.length; i++) {
-                if (inputMask.maskProcess(inputMask.input.value.length, valReturn[i], mask)) {
-                    inputMask.input.value += valReturn[i];
-                }
-            }
-            var finalCount = inputMask.input.value.length;
 
-            return initCount - finalCount;
+            return valChecked;
         }
     };
 
