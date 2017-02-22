@@ -75,7 +75,7 @@
                 return false;
             }
         },
-        getPattern: function (label, length) {
+        getPattern: function (label, length, nomask) {
             var mask = inputMask.patterns[label] ? inputMask.patterns[label] : label;
             var maskAlternative = {};
             maskAlternative[mask.replace(/([0Aa])\?/i, '$1').length] = mask.replace(/([0Aa])\?/i, '$1');
@@ -86,7 +86,16 @@
                 maskFilter = maskFilter.replace(/([0Aa])\?/i, '');
             }
 
-
+            if (nomask) {
+                var nomaskCount = 0
+                for(var i=0;i<maskFilter.length;i++){
+                    var maskKey = maskFilter[i];
+                    if(!inputMask.espChar[maskKey]){
+                        nomaskCount++;
+                    }
+                }
+                length += nomaskCount;
+            }
 
             if (maskAlternative[length]) {
                 return maskAlternative[length];
